@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Do Not Disturb / Silent mode control (granted via Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS) -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
+    <!-- Exact Class Start & End Alarm triggers (granted via Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM on Android 12+) -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <!-- Re-register alarms automatically if phone restarts -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@android:drawable/ic_lock_silent_mode"
+        android:label="ClassMute"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@android:style/Theme.Material.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Internal receiver for app's own exact class start/end alarms (exported="false" for security) -->
+        <receiver
+            android:name=".ClassMuteReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.classmute.ACTION_CLASS_START" />
+                <action android:name="com.example.classmute.ACTION_CLASS_END" />
+            </intent-filter>
+        </receiver>
+
+        <!-- System broadcast receiver for device reboot and exact alarm permission grant -->
+        <receiver
+            android:name=".SystemBootPermissionReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>
